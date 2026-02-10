@@ -8,4 +8,14 @@ public class ShortUrl {
     LocalDateTime createdAt;
     LocalDateTime expiresAt; // nullable — может быть бессрочной
     int clickCount;          // счётчик переходов
+
+    public String getShortCode()
+    {
+        return shortCode;
+    }
+
+    public void setShortCode(String shortCode)
+    {
+        this.shortCode = shortCode;
+    }
 }

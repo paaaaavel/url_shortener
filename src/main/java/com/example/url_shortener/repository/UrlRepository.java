@@ -1,7 +1,6 @@
 package com.example.url_shortener.repository;
 
 import com.example.url_shortener.model.ShortUrl;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
