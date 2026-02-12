@@ -7,15 +7,15 @@ import java.time.LocalDateTime;
 
 public class CreateUrlRequest
 {
-    private String originalUrl;
-    private String customCode;
-    private LocalDateTime expiresAt;
-
     @NotBlank(message = "URL не может быть пустым")
     @Pattern(
             regexp = "^https?://.*",
             message = "URL должен начинаться с http:// или https://"
     )
+    private String originalUrl;
+
+    private String customCode;
+    private LocalDateTime expiresAt;
 
     public String getCustomCode()
     {
