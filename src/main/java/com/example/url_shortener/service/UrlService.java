@@ -2,6 +2,7 @@ package com.example.url_shortener.service;
 
 import com.example.url_shortener.dto.CreateUrlRequest;
 import com.example.url_shortener.dto.UrlResponse;
+import com.example.url_shortener.exception.UrlExpiredException;
 import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.model.ShortUrl;
 import com.example.url_shortener.repository.UrlRepository;
@@ -86,4 +87,17 @@ public class UrlService
             throw new UrlNotFoundException("Ссылка не найдена: " + code);
         }
     }
+
+    public String getOriginalUrlAndIncrementClicks(String shortCode) {
+        ShortUrl shortUrl = urlRepository.findByCode(shortCode);
+        if (shortUrl == null) {
+            throw new UrlNotFoundException("Ссылка не найдена: " + shortCode);
+        }
+        if (shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new UrlExpiredException();
+        }
+        shortUrl.setClickCount(shortUrl.getClickCount() + 1);
+        return shortUrl.getOriginalUrl();
+    }
+
 }

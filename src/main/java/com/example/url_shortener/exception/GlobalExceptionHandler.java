@@ -12,4 +12,8 @@ public class GlobalExceptionHandler
     public ResponseEntity<ErrorResponse> handleUrlNotFoundException(UrlNotFoundException ex) {
         return ResponseEntity.status(404).body(new ErrorResponse(ex.getMessage()));
     }
+    @ExceptionHandler(UrlExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleUrlExpiredException(UrlExpiredException ex) {
+        return ResponseEntity.status(410).body(new ErrorResponse(ex.getMessage()));
+    }
 }
