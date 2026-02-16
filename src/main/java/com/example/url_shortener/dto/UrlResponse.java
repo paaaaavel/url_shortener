@@ -23,10 +23,7 @@ public class UrlResponse
         this.shortUrl = "http://localhost:8080/" + url.getShortCode();
     }
 
-    public UrlResponse()
-    {
-
-    }
+    public UrlResponse() {}
 
     public String getOriginalUrl()
     {
