@@ -1,5 +1,7 @@
 package com.example.url_shortener.dto;
 
+import com.example.url_shortener.model.ShortUrl;
+
 import java.time.LocalDateTime;
 
 public class UrlResponse
@@ -10,6 +12,21 @@ public class UrlResponse
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private int clickCount;
+
+    public UrlResponse(ShortUrl url)
+    {
+        this.originalUrl = url.getOriginalUrl();
+        this.shortCode = url.getShortCode();
+        this.createdAt = url.getCreatedAt();
+        this.expiresAt = url.getExpiresAt();
+        this.clickCount = url.getClickCount();
+        this.shortUrl = "http://localhost:8080/" + url.getShortCode();
+    }
+
+    public UrlResponse()
+    {
+
+    }
 
     public String getOriginalUrl()
     {

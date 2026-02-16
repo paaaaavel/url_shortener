@@ -24,4 +24,10 @@ public class UrlRepository
         urls.addAll(storage.values());
         return urls;
     }
+    public boolean deleteByCode(String code){
+        if (storage.remove(code) != null){
+            return true;
+        }
+        return false;
+    }
 }

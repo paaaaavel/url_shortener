@@ -8,6 +8,8 @@ import com.example.url_shortener.repository.UrlRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service //создает объект(bean) и хранит его
 public class UrlService
@@ -15,18 +17,22 @@ public class UrlService
     private final ShortCodeGenerator shortCodeGenerator;
     private final UrlRepository urlRepository;
 
-    public UrlService(ShortCodeGenerator shortCodeGenerator, UrlRepository urlRepository) {
+    public UrlService(ShortCodeGenerator shortCodeGenerator, UrlRepository urlRepository)
+    {
         this.shortCodeGenerator = shortCodeGenerator;
         this.urlRepository = urlRepository;
     }
 
-    public UrlResponse shortenUrl(CreateUrlRequest request){
+    public UrlResponse shortenUrl(CreateUrlRequest request)
+    {
         UrlResponse urlResponse = new UrlResponse();
         urlResponse.setOriginalUrl(request.getOriginalUrl());
         String shortCode;
-        if (request.getCustomCode() != null) {
+        if (request.getCustomCode() != null)
+        {
             shortCode = request.getCustomCode();
-        } else {
+        } else
+        {
             shortCode = shortCodeGenerator.generateShortCode();
         }
         LocalDateTime createdAt = LocalDateTime.now();
@@ -44,9 +50,11 @@ public class UrlService
         return urlResponse;
     }
 
-    public UrlResponse getShortUrl(String shortCode) {
+    public UrlResponse getShortUrl(String shortCode)
+    {
         ShortUrl shortUrl = urlRepository.findByCode(shortCode);
-        if (shortUrl == null) {
+        if (shortUrl == null)
+        {
             throw new UrlNotFoundException("Ссылка не найдена: " + shortCode);
         }
 
@@ -58,5 +66,24 @@ public class UrlService
         response.setClickCount(shortUrl.getClickCount());
         response.setShortUrl("http://localhost:8080/" + shortUrl.getShortCode());
         return response;
+    }
+
+    public List<UrlResponse> getAllUrls()
+    {
+        List<UrlResponse> urlResponses = new ArrayList<>();
+        List<ShortUrl> urls = urlRepository.findAll();
+        for (ShortUrl url : urls)
+        {
+            urlResponses.add(new UrlResponse(url));
+        }
+        return urlResponses;
+    }
+
+    public void deleteByCode(String code)
+    {
+        if (!urlRepository.deleteByCode(code))
+        {
+            throw new UrlNotFoundException("Ссылка не найдена: " + code);
+        }
     }
 }
