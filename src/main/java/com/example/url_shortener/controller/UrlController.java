@@ -59,4 +59,18 @@ public class UrlController {
     public List<UrlResponse> batchShorten(@Valid @RequestBody List<CreateUrlRequest> requests) {
         return urlService.batchShorten(requests);
     }
+
+    @GetMapping("/export")
+    public ResponseEntity<?> exportUrls(@RequestParam(defaultValue = "json") String format) {
+        String fmt = (format == null) ? "json" : format.trim().toLowerCase();
+
+        if ("csv".equals(fmt)) {
+            String csv = urlService.exportUrlsCsv();
+            return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                    .body(csv);
+        }
+
+        return ResponseEntity.ok(urlService.exportUrlsJson());
+    }
 }

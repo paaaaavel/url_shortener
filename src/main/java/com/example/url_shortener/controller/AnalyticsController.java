@@ -29,5 +29,8 @@ public class AnalyticsController
         return analyticsService.getAnalytics(shortCode);
     }
 
-
+    @GetMapping("/api/v1/analytics")
+    public AnalyticsResponse getGlobalAnalytics() {
+        return analyticsService.getGlobalAnalytics();
+    }
 }

@@ -7,7 +7,7 @@ import com.example.url_shortener.exception.UrlExpiredException;
 import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.model.ShortUrl;
 import com.example.url_shortener.repository.UrlRepository;
-import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -328,5 +328,42 @@ public class UrlService
             responses.add(shortUrl);
         }
         return responses;
+    }
+
+    public List<UrlResponse> exportUrlsJson() {
+        return urlRepository.findAll()
+                .stream()
+                .map(UrlResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public String exportUrlsCsv() {
+        List<ShortUrl> urls = urlRepository.findAll();
+        StringBuilder csv = new StringBuilder();
+
+        csv.append("shortCode,originalUrl,createdAt,clickCount").append("\n");
+
+        for (ShortUrl url : urls) {
+            csv.append(csvEscape(url.getShortCode())).append(",")
+                    .append(csvEscape(url.getOriginalUrl())).append(",")
+                    .append(csvEscape(url.getCreatedAt() != null ? url.getCreatedAt().toString() : ""))
+                    .append(",")
+                    .append(url.getClickCount())
+                    .append("\n");
+        }
+
+        return csv.toString();
+    }
+
+    private String csvEscape(String value) {
+        if (value == null) {
+            return "";
+        }
+        boolean mustQuote = value.contains(",") || value.contains("\"") || value.contains("\n") || value.contains("\r");
+        if (!mustQuote) {
+            return value;
+        }
+        String escaped = value.replace("\"", "\"\"");
+        return "\"" + escaped + "\"";
     }
 }
