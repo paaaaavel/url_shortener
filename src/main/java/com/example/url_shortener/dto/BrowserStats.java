@@ -2,8 +2,14 @@ package com.example.url_shortener.dto;
 
 public class BrowserStats
 {
-    String browser;
-    long count;
+    private String browser;
+    private long count;
+
+    public BrowserStats(String browser, long count)
+    {
+        this.browser = browser;
+        this.count = count;
+    }
 
     public String getBrowser()
     {

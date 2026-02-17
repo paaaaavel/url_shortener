@@ -2,6 +2,15 @@ package com.example.url_shortener.dto;
 
 public class RefererStats
 {
+    private String referer;
+    private long count;
+
+    public RefererStats(String referer, long count)
+    {
+        this.referer = referer;
+        this.count = count;
+    }
+
     public String getReferer()
     {
         return referer;
@@ -21,7 +30,4 @@ public class RefererStats
     {
         this.count = count;
     }
-
-    String referer;
-    long count;
 }

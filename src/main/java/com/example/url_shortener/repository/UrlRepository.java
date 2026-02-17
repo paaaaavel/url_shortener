@@ -16,14 +16,17 @@ public class UrlRepository
     public void save(ShortUrl url){
         storage.putIfAbsent(url.getShortCode(), url);
     }
+
     public ShortUrl findByCode(String code){
         return storage.get(code);
     }
+
     public List<ShortUrl> findAll(){
         List<ShortUrl> urls = new ArrayList<>();
         urls.addAll(storage.values());
         return urls;
     }
+
     public boolean deleteByCode(String code){
         if (storage.remove(code) != null){
             return true;
