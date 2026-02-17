@@ -7,6 +7,7 @@ import com.example.url_shortener.exception.UrlExpiredException;
 import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.model.ShortUrl;
 import com.example.url_shortener.repository.UrlRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -317,5 +318,15 @@ public class UrlService
                 .stream()
                 .map(UrlResponse::new)
                 .toList();
+    }
+
+    public List<UrlResponse> batchShorten(List<CreateUrlRequest> requests)
+    {
+        List<UrlResponse> responses = new ArrayList<>();
+        for (CreateUrlRequest request : requests) {
+            UrlResponse shortUrl = shortenUrl(request);
+            responses.add(shortUrl);
+        }
+        return responses;
     }
 }

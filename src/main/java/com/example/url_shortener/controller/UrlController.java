@@ -54,4 +54,9 @@ public class UrlController {
                                         @RequestParam(required = false) String keyword) {
         return urlService.searchUrls(domain, keyword);
     }
+
+    @PostMapping("/batch")
+    public List<UrlResponse> batchShorten(@Valid @RequestBody List<CreateUrlRequest> requests) {
+        return urlService.batchShorten(requests);
+    }
 }

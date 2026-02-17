@@ -2,6 +2,7 @@ package com.example.url_shortener.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,13 @@ public class CreateUrlRequest
     )
     private String originalUrl;
 
+    @Size(min = 3, max = 20, message = "Custom code должен содержать 3-20 символов")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9-]+$",
+            message = "Custom code может содержать только буквы, цифры и дефис"
+    )
     private String customCode;
+
     private LocalDateTime expiresAt;
 
     public String getCustomCode()
