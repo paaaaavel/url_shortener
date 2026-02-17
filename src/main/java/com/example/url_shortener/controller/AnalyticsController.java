@@ -1,6 +1,7 @@
 package com.example.url_shortener.controller;
 
 import com.example.url_shortener.dto.AnalyticsResponse;
+import com.example.url_shortener.dto.AnalyticsSummaryResponse;
 import com.example.url_shortener.dto.UrlStatsResponse;
 import com.example.url_shortener.service.AnalyticsService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,5 +33,10 @@ public class AnalyticsController
     @GetMapping("/api/v1/analytics")
     public AnalyticsResponse getGlobalAnalytics() {
         return analyticsService.getGlobalAnalytics();
+    }
+
+    @GetMapping("/api/v1/analytics/summary")
+    public AnalyticsSummaryResponse getAnalyticsSummary() {
+        return analyticsService.getAnalyticsSummary();
     }
 }

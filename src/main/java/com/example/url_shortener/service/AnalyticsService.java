@@ -1,9 +1,6 @@
 package com.example.url_shortener.service;
 
-import com.example.url_shortener.dto.AnalyticsResponse;
-import com.example.url_shortener.dto.BrowserStats;
-import com.example.url_shortener.dto.RefererStats;
-import com.example.url_shortener.dto.UrlStatsResponse;
+import com.example.url_shortener.dto.*;
 import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.model.Click;
 import com.example.url_shortener.model.ShortUrl;
@@ -162,5 +159,71 @@ public class AnalyticsService
                 .toList();
 
         return new AnalyticsResponse(totalClicks, uniqueIps, clicksByDate, clicksByHour, topReferers, topBrowsers);
+    }
+
+    public AnalyticsSummaryResponse getAnalyticsSummary()
+    {
+        List<ShortUrl> urls = urlRepository.findAll();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = LocalDate.now();
+
+        long totalUrls = urls.size();
+        long activeUrls = urls.stream()
+                .filter(u -> u.getExpiresAt() == null || u.getExpiresAt().isAfter(now))
+                .count();
+        long expiredUrls = urls.stream()
+                .filter(u -> u.getExpiresAt() != null && !u.getExpiresAt().isAfter(now))
+                .count();
+
+        List<Click> allClicks = urls.stream()
+                .flatMap(u -> clickRepository.findByShortCode(u.getShortCode()).stream())
+                .toList();
+
+        long totalClicks = allClicks.size();
+        long todayClicks = allClicks.stream()
+                .filter(c -> c.getTimestamp() != null && c.getTimestamp().toLocalDate().equals(today))
+                .count();
+
+        double averageClicksPerUrl = (totalUrls == 0) ? 0.0 : (double) totalClicks / (double) totalUrls;
+
+        MostPopularUrlDto mostPopularUrl = urls.stream()
+                .max(Comparator.comparingInt(ShortUrl::getClickCount))
+                .map(u -> new MostPopularUrlDto(u.getShortCode(), u.getClickCount()))
+                .orElse(null);
+
+        long urlsCreatedToday = urls.stream()
+                .filter(u -> u.getCreatedAt() != null && u.getCreatedAt().toLocalDate().equals(today))
+                .count();
+
+        Map<LocalDate, Long> clicksLastWeek = java.util.stream.Stream
+                .iterate(today.minusDays(6), d -> d.plusDays(1))
+                .limit(7)
+                .collect(java.util.stream.Collectors.toMap(
+                        Function.identity(),
+                        d -> 0L,
+                        (a, b) -> a,
+                        java.util.LinkedHashMap::new
+                ));
+
+        Map<LocalDate, Long> groupedLastWeek = allClicks.stream()
+                .filter(c -> c.getTimestamp() != null)
+                .collect(Collectors.groupingBy(
+                        c -> c.getTimestamp().toLocalDate(),
+                        Collectors.counting()
+                ));
+
+        clicksLastWeek.replaceAll((d, v) -> groupedLastWeek.getOrDefault(d, 0L));
+
+        return new AnalyticsSummaryResponse(
+                totalUrls,
+                activeUrls,
+                expiredUrls,
+                totalClicks,
+                todayClicks,
+                averageClicksPerUrl,
+                mostPopularUrl,
+                urlsCreatedToday,
+                clicksLastWeek
+        );
     }
 }
