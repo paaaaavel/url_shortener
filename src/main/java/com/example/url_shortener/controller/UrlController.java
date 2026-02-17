@@ -30,12 +30,28 @@ public class UrlController {
     }
 
     @GetMapping
-    public List<UrlResponse> getAllUrls() {
-        return urlService.getAllUrls();
+    public List<UrlResponse> getAllUrls(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String sortBy, @RequestParam(required = false) String order) {
+        return urlService.getAllUrls(page, size, sortBy, order);
     }
     @DeleteMapping("/{shortCode}")
     public ResponseEntity<Void> deleteByCode(@PathVariable String shortCode) {
         urlService.deleteByCode(shortCode);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/active")
+    public List<UrlResponse> getActiveUrls() {
+        return urlService.getActiveUrls();
+    }
+
+    @GetMapping("/expired")
+    public List<UrlResponse> getExpiredUrls() {
+        return urlService.getExpiredUrls();
+    }
+
+    @GetMapping("/search")
+    public List<UrlResponse> searchUrls(@RequestParam(required = false) String domain,
+                                        @RequestParam(required = false) String keyword) {
+        return urlService.searchUrls(domain, keyword);
     }
 }

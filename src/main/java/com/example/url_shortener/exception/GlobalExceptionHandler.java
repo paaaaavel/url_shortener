@@ -16,4 +16,8 @@ public class GlobalExceptionHandler
     public ResponseEntity<ErrorResponse> handleUrlExpiredException(UrlExpiredException ex) {
         return ResponseEntity.status(410).body(new ErrorResponse(ex.getMessage()));
     }
+    @ExceptionHandler(ShortCodeAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleShortCodeAlreadyExistsException(ShortCodeAlreadyExistsException ex) {
+        return ResponseEntity.status(409).body(new ErrorResponse(ex.getMessage()));
+    }
 }
