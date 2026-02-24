@@ -4,7 +4,3 @@ server:
 spring:
   application:
     name: url-shortener
-
-app:
-  base-url: http://localhost:8080
-  default-expiration-days: 30
