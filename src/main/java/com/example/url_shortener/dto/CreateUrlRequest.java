@@ -26,7 +26,7 @@ public class CreateUrlRequest {
     @Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "shortCode может содержать только буквы, цифры и дефис")
     private String shortCode;
 
-    // опционально: если передали — должна быть в будущем
+    // тут вопрос: nullable по тз = текущее + 30 дней; мы решили, что null = бессрочно; Future на null не ругается
     @Future(message = "expiresAt должен быть в будущем")
     private LocalDateTime expiresAt;
 }

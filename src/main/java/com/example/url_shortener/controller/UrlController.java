@@ -23,26 +23,27 @@ public class UrlController {
 
     @PostMapping
     public ResponseEntity<UrlResponse> create(@Valid @RequestBody CreateUrlRequest request) {
-        log.info("HTTP create url");
+        log.info("POST /api/v1/urls originalUrl={}", request.getOriginalUrl());
         UrlResponse created = urlService.createUrl(request);
         return ResponseEntity.status(201).body(created);
     }
 
     @GetMapping
     public List<UrlResponse> getAllUrls() {
-        log.info("HTTP get all urls");
+        // это часто дергают — лучше debug, чтобы не засорять прод-логи
+        log.debug("GET /api/v1/urls");
         return urlService.getAllUrls();
     }
 
     @GetMapping("/{shortCode}")
     public UrlResponse getUrlByCode(@PathVariable String shortCode) {
-        log.info("HTTP get url by code={}", shortCode);
+        log.debug("GET /api/v1/urls/{}", shortCode);
         return urlService.getUrlByCode(shortCode);
     }
 
     @DeleteMapping("/{shortCode}")
     public ResponseEntity<Void> deleteUrl(@PathVariable String shortCode) {
-        log.info("HTTP delete url code={}", shortCode);
+        log.info("DELETE /api/v1/urls/{}", shortCode);
         urlService.deleteUrl(shortCode);
         return ResponseEntity.noContent().build();
     }
