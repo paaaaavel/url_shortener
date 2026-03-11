@@ -1,31 +1,15 @@
 package com.example.url_shortener.repository;
 
 import com.example.url_shortener.model.ShortUrl;
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 
-@Component
-public class UrlRepository {
+public interface UrlRepository extends JpaRepository<ShortUrl, Long> {
 
-    private final Map<String, ShortUrl> storage = new ConcurrentHashMap<>();
+    Optional<ShortUrl> findByShortCode(String shortCode);
 
-    public void save(ShortUrl url) {
-        storage.put(url.getShortCode(), url); // save = сохранить/обновить
-    }
+    boolean existsByShortCode(String shortCode);
 
-    public ShortUrl findByShortCode(String shortCode) {
-        return storage.get(shortCode);
-    }
-
-    public List<ShortUrl> findAll() {
-        return new ArrayList<>(storage.values());
-    }
-
-    public boolean deleteByShortCode(String shortCode) {
-        return storage.remove(shortCode) != null;
-    }
+    void deleteByShortCode(String shortCode);
 }

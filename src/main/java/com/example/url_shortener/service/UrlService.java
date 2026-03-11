@@ -8,6 +8,7 @@ import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.model.ShortUrl;
 import com.example.url_shortener.repository.UrlRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,9 +30,9 @@ public class UrlService {
         if (code == null || code.isBlank()) {
             do {
                 code = shortCodeGenerator.generate();
-            } while (urlRepository.findByShortCode(code) != null);
+            } while (urlRepository.existsByShortCode(code));
         } else {
-            if (urlRepository.findByShortCode(code) != null) {
+            if (urlRepository.existsByShortCode(code)) {
                 throw new ShortCodeAlreadyExistsException(code);
             }
         }
@@ -59,25 +60,24 @@ public class UrlService {
     }
 
     public UrlResponse getUrlByCode(String shortCode) {
-        ShortUrl shortUrl = urlRepository.findByShortCode(shortCode);
-        if (shortUrl == null) {
-            throw new UrlNotFoundException("URL not found: " + shortCode);
-        }
+        ShortUrl shortUrl = urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new UrlNotFoundException("URL not found: " + shortCode));
+
         return toResponse(shortUrl);
     }
 
+    @Transactional
     public void deleteUrl(String shortCode) {
-        boolean deleted = urlRepository.deleteByShortCode(shortCode);
-        if (!deleted) {
+        if (!urlRepository.existsByShortCode(shortCode)) {
             throw new UrlNotFoundException("URL not found: " + shortCode);
         }
+
+        urlRepository.deleteByShortCode(shortCode);
     }
 
     public String getOriginalUrlForRedirect(String shortCode) {
-        ShortUrl shortUrl = urlRepository.findByShortCode(shortCode);
-        if (shortUrl == null) {
-            throw new UrlNotFoundException("URL not found: " + shortCode);
-        }
+        ShortUrl shortUrl = urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new UrlNotFoundException("URL not found: " + shortCode));
 
         LocalDateTime expiresAt = shortUrl.getExpiresAt();
         if (expiresAt != null && !expiresAt.isAfter(LocalDateTime.now())) {
