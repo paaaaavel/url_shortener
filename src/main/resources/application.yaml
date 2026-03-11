@@ -4,6 +4,14 @@ server:
 spring:
   application:
     name: url-shortener
+  datasource:
+    url: jdbc:postgresql://localhost:5432/url_shortener
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 springdoc:
   api-docs:
